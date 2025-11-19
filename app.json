@@ -1,0 +1,40 @@
+{
+  "expo": {
+    "name": "Petra",
+    "slug": "Petra",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/petra_logo_round.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/petra_logo_round.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/petra_logo_round.png",
+        "backgroundColor": "#ffffff"
+      },
+      "edgeToEdgeEnabled": true,
+      "package": "com.bille.Petra"
+    },
+    "web": {
+      "favicon": "./assets/petra_logo_round.png"
+    },
+    "extra": {
+      "eas": {
+        "comment-remove-me-later-bitch": "b090ce79-4539-4a35-bf87-a48ae6bf68c0",
+        "projectId": "2d9918d7-773d-4a75-8b94-28dbac2f6c30"
+      }
+    },
+    "plugins": [
+      "expo-sqlite",
+      "expo-asset"
+    ]
+  }
+}
