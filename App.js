@@ -215,13 +215,13 @@ const PetraTracker = () => {
       const predictedPeriodDays = getPredictedPeriodDays();
       const ovulation = predictOvulation();
 
-      // Todo: überfällige Tage auch markieren
       const isFertile = fertileDays.some(fd => fd.toDateString() === currentDayDate.toDateString());
       const isPredictedPeriod = predictedPeriodDays.some(pd => pd.toDateString() === currentDayDate.toDateString());
       const isOvulation = getAllOvulations().some(ov => ov.toDateString() === currentDayDate.toDateString());
+      const isOverdue = getOverdueDays().some(od => od.toDateString() === currentDayDate.toDateString());
       const isToday = dateStr === todayStr;
 
-      return { cycle: hasPeriod ? { type: 'period' } : null, symptoms: daySymptoms, isFertile, isPredictedPeriod, isOvulation, isToday };
+      return { cycle: hasPeriod ? { type: 'period' } : null, symptoms: daySymptoms, isOverdue, isFertile, isPredictedPeriod, isOvulation, isToday };
     };
 
   const addPeriod = () => {
@@ -331,6 +331,7 @@ const PetraTracker = () => {
 
             const dayInfo = getDayInfo(day);
             const isPeriod = dayInfo.cycle?.type === 'period';
+            const isOverdue = dayInfo.isOverdue;
             const hasSymptoms = dayInfo.symptoms.length > 0;
 
             let baseStyle = {
@@ -346,6 +347,8 @@ const PetraTracker = () => {
             };
             if (isPeriod) {
               baseStyle = { ...baseStyle, backgroundColor: '#EF4444', borderColor: '#EF4444' };
+            } else if (isOverdue) {
+              baseStyle = { ...baseStyle, backgroundColor: '#506896', borderColor: '#394a6b' };
             } else if (dayInfo.isPredictedPeriod) {
               baseStyle = { ...baseStyle, backgroundColor: '#FEE2E2', borderColor: '#FCA5A5', borderStyle: 'dashed' };
             } else if (dayInfo.isOvulation) {
@@ -359,6 +362,7 @@ const PetraTracker = () => {
             }
 
             const textColor = isPeriod ? '#FFFFFF'
+                            : dayInfo.isOverdue ? '#FFFFFF'
                             : dayInfo.isPredictedPeriod ? '#B91C1C'
                             : dayInfo.isOvulation ? '#1E3A8A'
                             : dayInfo.isFertile ? '#1E40AF'
