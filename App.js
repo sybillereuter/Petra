@@ -3,6 +3,8 @@ import React, { useState, useEffect } from 'react';
 import { SafeAreaView, View, Text, Modal, TextInput, ScrollView, TouchableOpacity } from 'react-native';
 import { db, initDatabase } from './db';
 import { Calendar, Plus, TrendingUp, Heart, Moon, Brain } from 'lucide-react-native';
+import strings from './strings';
+import symptomStrings from './symptomStrings';
 
 const PetraTracker = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -16,57 +18,9 @@ const PetraTracker = () => {
   const [newPeriodLength, setNewPeriodLength] = useState(5);
   const [newSymptomDate, setNewSymptomDate] = useState(new Date().toISOString().split('T')[0]);
   const [selectedSymptom, setSelectedSymptom] = useState('');
-
-  // Todo: auslagern, en dazu, locale auswählen
-  const symptomCategories = {
-    mood: {
-      name: 'Stimmung',
-      symptoms: [
-        { id: 'happy', name: '😊 Glücklich', color: 'bg-green-100 text-green-800' },
-        { id: 'dynamic', name: '🤩 Dynamisch', color: 'bg-yellow-100 text-yellow-800' },
-        { id: 'high_libido', name: '😍 Hohe Libido', color: 'bg-pink-100 text-pink-800' },
-        { id: 'sad', name: '😢 Traurig', color: 'bg-blue-100 text-blue-800' },
-        { id: 'depressed', name: '😔 Deprimiert', color: 'bg-indigo-100 text-indigo-800' },
-        { id: 'angry', name: '😡 Wütend', color: 'bg-red-100 text-red-800' },
-        { id: 'scared', name: '😖 Ängstlich', color: 'bg-orange-100 text-orange-800' },
-        { id: 'brain_fog', name: '😶‍🌫️ Brain Fog', color: 'bg-gray-100 text-gray-800' },
-        { id: 'tired', name: '😴 Müde', color: 'bg-purple-100 text-purple-800' },
-        { id: 'low_energy', name: '😫 Wenig Energie', color: 'bg-slate-100 text-slate-800' }
-      ]
-    },
-    symptoms: {
-      name: 'Symptome',
-      symptoms: [
-        { id: 'headache', name: '🤕 Kopfschmerzen', color: 'bg-red-100 text-red-800' },
-        { id: 'acne', name: '🔴 Akne', color: 'bg-orange-100 text-orange-800' },
-        { id: 'cramps', name: '😖🩸 Krämpfe', color: 'bg-red-100 text-red-800' },
-        { id: 'weight', name: '🤰 Gewichtszunahme', color: 'bg-blue-100 text-blue-800' },
-        { id: 'back_pain', name: '🧘 Rückenschmerzen', color: 'bg-yellow-100 text-yellow-800' },
-        { id: 'cravings', name: '🍫 Heißhunger', color: 'bg-orange-100 text-orange-800' },
-        { id: 'sick', name: '🤢 Übelkeit', color: 'bg-green-100 text-green-800' },
-        { id: 'bloated', name: '🎈 Blähungen', color: 'bg-pink-100 text-pink-800' },
-        { id: 'obstipation', name: '🚽 Verstopfung', color: 'bg-brown-100 text-brown-800' },
-        { id: 'diarrhea', name: '💩 Durchfall', color: 'bg-amber-100 text-amber-800' },
-        { id: 'sore_breast', name: '👙 Brustspannen', color: 'bg-rose-100 text-rose-800' },
-        { id: 'joint_pain', name: '🦵 Gelenkschmerzen', color: 'bg-indigo-100 text-indigo-800' },
-        { id: 'sleeplessness', name: '🌙 Schlaflosigkeit', color: 'bg-purple-100 text-purple-800' },
-        { id: 'night_sweats', name: '💦 Nachtschweiß', color: 'bg-teal-100 text-teal-800' }
-      ]
-    },
-    discharge: {
-      name: 'Ausfluss',
-      symptoms: [
-        { id: 'creamy', name: '🥛 Cremig', color: 'bg-stone-100 text-stone-800' },
-        { id: 'watery', name: '💧 Wässrig', color: 'bg-cyan-100 text-cyan-800' },
-        { id: 'sticky', name: '🍯 Klebrig', color: 'bg-amber-100 text-amber-800' },
-        { id: 'egg_white', name: '🥚 Eiweißartig', color: 'bg-yellow-100 text-yellow-800' },
-        { id: 'spotting', name: '🔴 Schmierblutung', color: 'bg-red-100 text-red-800' },
-        { id: 'unusual', name: '❓ Ungewöhnlich', color: 'bg-gray-100 text-gray-800' },
-        { id: 'lumpy_white', name: '🧂 Klumpig Weiß', color: 'bg-gray-100 text-gray-800' },
-        { id: 'gray', name: '🔘 Grau', color: 'bg-slate-100 text-slate-800' }
-      ]
-    }
-  };
+  const [locale, setLocale] = useState('de'); // todo: picker
+  const t = strings[locale];
+  const symptomCategories = symptomStrings[locale];
 
   const allSymptoms = Object.values(symptomCategories).flatMap(cat => cat.symptoms);
 
@@ -193,8 +147,7 @@ const PetraTracker = () => {
     return days;
   };
 
-  // Todo: Lokalisierung
-  const formatDate = (date) => date.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  const formatDate = (date) => date.toLocaleDateString(t.localeISO, { day: '2-digit', month: '2-digit', year: 'numeric' });
 
   const getDayInfo = (day) => {
       if (!day) return {};
@@ -242,7 +195,7 @@ const PetraTracker = () => {
   const nextPeriod = predictNextPeriod();
   const nextOvulation = predictOvulation();
 
-  // Todo: Lokalisierung, Period/Symptom Modal: 1. auch bei Klick auf Datum 2. auch entfernen
+  // Todo: Period/Symptom Modal: 1. auch bei Klick auf Datum 2. auch entfernen
   return (
     <SafeAreaView className="flex-1 bg-white">
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
@@ -260,7 +213,7 @@ const PetraTracker = () => {
             textAlign: 'center',
             color: '#FFFFFF'
           }}>
-            pe ‧‧ tra
+            {t.appName}
           </Text>
           <Text style={{
             textAlign: 'center',
@@ -268,7 +221,7 @@ const PetraTracker = () => {
             fontSize: 14,
             marginTop: 4
           }}>
-            periodentracker. privat & anonym.
+            {t.tagline}
           </Text>
         </View>
 
@@ -277,21 +230,21 @@ const PetraTracker = () => {
             <TouchableOpacity onPress={() => setActiveTab('calendar')} className={`flex-1 py-3 px-4 ${activeTab === 'calendar' ? 'border-b-2 border-pink-500' : ''}`}>
               <View className="items-center">
                 <Calendar size={20} color={activeTab === 'calendar' ? '#DB2777' : '#6B7280'} />
-                <Text className={`text-xs ${activeTab === 'calendar' ? 'text-pink-600' : 'text-gray-600'}`}>Kalender</Text>
+                <Text className={`text-xs ${activeTab === 'calendar' ? 'text-pink-600' : 'text-gray-600'}`}>{t.calendar}</Text>
               </View>
             </TouchableOpacity>
 
             <TouchableOpacity onPress={() => setActiveTab('predictions')} className={`flex-1 py-3 px-4 ${activeTab === 'predictions' ? 'border-b-2 border-pink-500' : ''}`}>
               <View className="items-center">
                 <TrendingUp size={20} color={activeTab === 'predictions' ? '#DB2777' : '#6B7280'} />
-                <Text className={`text-xs ${activeTab === 'predictions' ? 'text-pink-600' : 'text-gray-600'}`}>Vorhersagen</Text>
+                <Text className={`text-xs ${activeTab === 'predictions' ? 'text-pink-600' : 'text-gray-600'}`}>{t.predictions}</Text>
               </View>
             </TouchableOpacity>
 
             <TouchableOpacity onPress={() => setActiveTab('stats')} className={`flex-1 py-3 px-4 ${activeTab === 'stats' ? 'border-b-2 border-pink-500' : ''}`}>
               <View className="items-center">
                 <Brain size={20} color={activeTab === 'stats' ? '#DB2777' : '#6B7280'} />
-                <Text className={`text-xs ${activeTab === 'stats' ? 'text-pink-600' : 'text-gray-600'}`}>Analyse</Text>
+                <Text className={`text-xs ${activeTab === 'stats' ? 'text-pink-600' : 'text-gray-600'}`}>{t.analysis}</Text>
               </View>
             </TouchableOpacity>
           </View>
@@ -304,7 +257,7 @@ const PetraTracker = () => {
                 <TouchableOpacity onPress={() => setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1))} className="p-2 rounded">
                   <Text className="text-gray-600">←</Text>
                 </TouchableOpacity>
-                <Text className="text-lg font-semibold">{currentDate.toLocaleDateString('de-DE', { month: 'long', year: 'numeric' })}</Text>
+                <Text className="text-lg font-semibold">{currentDate.toLocaleDateString(t.localeISO, { month: 'long', year: 'numeric' })}</Text>
 
                 <TouchableOpacity onPress={() => setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1))} className="p-2 rounded">
                   <Text className="text-gray-600">→</Text>
@@ -315,7 +268,7 @@ const PetraTracker = () => {
       <View style={{ marginBottom: 16 }}>
         {/* Header Row */}
         <View style={{ flexDirection: 'row' }}>
-          {['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'].map(day => (
+          {t.weekDays.map(day => (
             <View key={day} style={{ flex: 1, alignItems: 'center', paddingVertical: 8 }}>
               <Text style={{ textAlign: 'center', fontSize: 14, fontWeight: '500', color: '#6B7280' }}>
                 {day}
@@ -419,15 +372,15 @@ const PetraTracker = () => {
       <View className="text-xs text-gray-600 mb-4 space-y-1">
         <View className="flex-row items-center space-x-2">
           <View className="w-3 h-3 bg-red-500 rounded" />
-          <Text>Periode</Text>
+          <Text>{t.period}</Text>
           <View className="w-3 h-3 bg-red-100 border border-red-300 border-dashed rounded ml-4" />
-          <Text>Vorhergesagte Periode</Text>
+          <Text>{t.predictedPeriod}</Text>
         </View>
         <View className="flex-row items-center space-x-2">
           <View className="w-3 h-3 bg-blue-200 rounded" />
-          <Text>Eisprung</Text>
+          <Text>{t.ovulation}</Text>
           <View className="w-3 h-3 bg-blue-100 rounded ml-4" />
-          <Text>Fruchtbare Tage</Text>
+          <Text>{t.fertileDays}</Text>
         </View>
       </View>
 
@@ -435,7 +388,7 @@ const PetraTracker = () => {
       {getOverdueDays().length > 0 && (
         <View className="bg-blue-100 border border-blue-300 rounded p-3 mb-4">
           <Text className="text-blue-800 font-bold text-center">
-            Überfällig seit {getOverdueDays().length} Tagen
+            {t.overdueWarning.replace('{days}', getOverdueDays().length)}
           </Text>
         </View>
       )}
@@ -444,11 +397,11 @@ const PetraTracker = () => {
       <View className="flex-row space-x-2">
         <TouchableOpacity onPress={() => setShowAddPeriod(true)} className="flex-1 bg-red-500 py-2 px-4 rounded-lg items-center justify-center flex-row">
           <Plus size={16} color="#fff" />
-          <Text className="text-white ml-2">Periode</Text>
+          <Text className="text-white ml-2">{t.period}</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => setShowAddSymptom(true)} className="flex-1 bg-orange-500 py-2 px-4 rounded-lg items-center justify-center flex-row">
           <Plus size={16} color="#fff" />
-          <Text className="text-white ml-2">Symptom</Text>
+          <Text className="text-white ml-2">{t.symptom}</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -482,7 +435,7 @@ const PetraTracker = () => {
             marginLeft: 8,
             fontSize: 16
           }}>
-            Nächste Periode
+            {t.nextPeriod}
           </Text>
         </View>
         <Text style={{
@@ -490,14 +443,14 @@ const PetraTracker = () => {
           fontSize: 16,
           marginBottom: 4
         }}>
-          {nextPeriod ? formatDate(nextPeriod) : 'Noch keine Daten verfügbar'}
+          {nextPeriod ? formatDate(nextPeriod) : t.noData}
         </Text>
         <Text style={{
           fontSize: 14,
           color: '#DC2626',
           marginTop: 4
         }}>
-          Zykluslänge: {getAverageCycleLength()} Tage
+          {t.cycleLength.replace('{days}', getAverageCycleLength())}
         </Text>
       </View>
 
@@ -521,7 +474,7 @@ const PetraTracker = () => {
             marginLeft: 8,
             fontSize: 16
           }}>
-            Eisprung
+            {t.ovulation}
           </Text>
         </View>
         <Text style={{
@@ -529,14 +482,14 @@ const PetraTracker = () => {
           fontSize: 16,
           marginBottom: 4
         }}>
-          {nextOvulation ? formatDate(nextOvulation) : 'Noch keine Daten verfügbar'}
+          {nextOvulation ? formatDate(nextOvulation) : t.noData}
         </Text>
         <Text style={{
           fontSize: 14,
           color: '#2563EB',
           marginTop: 4
         }}>
-          Fruchtbare Tage: {nextOvulation ? `${formatDate(new Date(nextOvulation.getTime() - 2*24*60*60*1000))} - ${formatDate(new Date(nextOvulation.getTime() + 2*24*60*60*1000))}` : 'Unbekannt'}
+          {t.fertileDays}: {nextOvulation ? `${formatDate(new Date(nextOvulation.getTime() - 2*24*60*60*1000))} - ${formatDate(new Date(nextOvulation.getTime() + 2*24*60*60*1000))}` : t.unknown}
         </Text>
       </View>
     </View>
@@ -564,7 +517,7 @@ const PetraTracker = () => {
           marginBottom: 12,
           fontSize: 16
         }}>
-          Deine Zyklusstatistiken
+          {t.yourStats}
         </Text>
         <View style={{
           flexDirection: 'row',
@@ -584,7 +537,7 @@ const PetraTracker = () => {
               color: '#EC4899',
               textAlign: 'center'
             }}>
-              Tage Zyklus
+              {t.cycleDays}
             </Text>
           </View>
           <View style={{ alignItems: 'center', flex: 1 }}>
@@ -600,7 +553,7 @@ const PetraTracker = () => {
               color: '#A855F7',
               textAlign: 'center'
             }}>
-              Zyklen getrackt
+              {t.cyclesTracked}
             </Text>
           </View>
         </View>
@@ -620,7 +573,7 @@ const PetraTracker = () => {
           marginBottom: 12,
           fontSize: 16
         }}>
-          Häufigste Symptome
+          {t.frequentSymptoms}
         </Text>
         <View style={{ flex: 1 }}>
           {Object.entries(symptomCategories).map(([categoryKey, category]) => {
@@ -676,27 +629,28 @@ const PetraTracker = () => {
   )}
 
   {/* Add Period Modal */}
+  {/* Todo: revamp */}
   <Modal visible={showAddPeriod} transparent animationType="fade">
     <View className="flex-1 bg-black bg-opacity-50 items-center justify-center p-4">
       <View className="bg-white rounded-lg p-6 w-full max-w-sm">
-        <Text className="text-lg font-semibold mb-4">Periode hinzufügen</Text>
+        <Text className="text-lg font-semibold mb-4">{t.addPeriod}</Text>
         <View className="space-y-4">
           <View>
-            <Text className="block text-sm font-medium text-gray-700 mb-1">Startdatum</Text>
+            <Text className="block text-sm font-medium text-gray-700 mb-1">{t.startDate}</Text>
             <TextInput value={newPeriodDate} onChangeText={setNewPeriodDate} className="w-full border border-gray-300 rounded-lg p-2" />
           </View>
 
           <View>
-            <Text className="block text-sm font-medium text-gray-700 mb-1">Dauer (Tage)</Text>
+            <Text className="block text-sm font-medium text-gray-700 mb-1">{t.length}</Text>
             <TextInput value={String(newPeriodLength)} onChangeText={(t) => setNewPeriodLength(parseInt(t) || 0)} className="w-full border border-gray-300 rounded-lg p-2" />
           </View>
 
           <View className="flex-row space-x-2">
             <TouchableOpacity onPress={() => setShowAddPeriod(false)} className="flex-1 bg-gray-200 py-2 px-4 rounded-lg items-center">
-              <Text className="text-gray-800">Abbrechen</Text>
+              <Text className="text-gray-800">{t.cancel}</Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={addPeriod} className="flex-1 bg-red-500 py-2 px-4 rounded-lg items-center">
-              <Text className="text-white">Speichern</Text>
+              <Text className="text-white">{t.save}</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -709,15 +663,15 @@ const PetraTracker = () => {
     <View className="flex-1 bg-black bg-opacity-50 items-center justify-center p-4">
       <View className="bg-white rounded-lg p-6 w-full max-w-sm max-h-[80vh]">
         <ScrollView>
-          <Text className="text-lg font-semibold mb-4">Symptom hinzufügen</Text>
+          <Text className="text-lg font-semibold mb-4">{t.addSymptom}</Text>
           <View className="space-y-4">
             <View>
-              <Text className="block text-sm font-medium text-gray-700 mb-1">Datum</Text>
+              <Text className="block text-sm font-medium text-gray-700 mb-1">{t.date}</Text>
               <TextInput value={newSymptomDate} onChangeText={setNewSymptomDate} className="w-full border border-gray-300 rounded-lg p-2" />
             </View>
 
             <View>
-              <Text className="block text-sm font-medium text-gray-700 mb-2">Symptom auswählen</Text>
+              <Text className="block text-sm font-medium text-gray-700 mb-2">{t.pickSymptom}</Text>
               {Object.entries(symptomCategories).map(([categoryKey, category]) => (
                 <View key={categoryKey} className="mb-4">
                   <Text className="font-medium text-gray-600 mb-2">{category.name}</Text>
@@ -734,10 +688,10 @@ const PetraTracker = () => {
 
             <View className="flex-row space-x-2">
               <TouchableOpacity onPress={() => { setShowAddSymptom(false); setSelectedSymptom(''); }} className="flex-1 bg-gray-200 py-2 px-4 rounded-lg items-center">
-                <Text className="text-gray-800">Abbrechen</Text>
+                <Text className="text-gray-800">{t.cancel}</Text>
               </TouchableOpacity>
               <TouchableOpacity onPress={addSymptom} className="flex-1 bg-orange-500 py-2 px-4 rounded-lg items-center">
-                <Text className="text-white">Speichern</Text>
+                <Text className="text-white">{t.save}</Text>
               </TouchableOpacity>
             </View>
           </View>
