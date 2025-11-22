@@ -3,6 +3,8 @@ import React, { useState, useEffect } from 'react';
 import { SafeAreaView, View, Text, Modal, TextInput, ScrollView, TouchableOpacity } from 'react-native';
 import { db, initDatabase } from './db';
 import { Calendar, Plus, TrendingUp, Heart, Moon, Brain } from 'lucide-react-native';
+import { Picker } from '@react-native-picker/picker';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import strings from './strings';
 import symptomStrings from './symptomStrings';
 
@@ -18,7 +20,17 @@ const PetraTracker = () => {
   const [newPeriodLength, setNewPeriodLength] = useState(5);
   const [newSymptomDate, setNewSymptomDate] = useState(new Date().toISOString().split('T')[0]);
   const [selectedSymptom, setSelectedSymptom] = useState('');
-  const [locale, setLocale] = useState('de'); // todo: picker
+  const [locale, setLocale] = useState('de');
+
+  const handleLocaleChange = async (value) => {
+    setLocale(value);
+    try {
+      await AsyncStorage.setItem('userLocale', value);
+    } catch (error) {
+      console.log('Error saving locale:', error);
+    }
+  };
+
   const t = strings[locale];
   const symptomCategories = symptomStrings[locale];
 
@@ -204,6 +216,7 @@ const PetraTracker = () => {
         {/* Header */}
         <View style={{
           backgroundColor: '#EC4899',
+          paddingTop: 40,
           paddingVertical: 16,
           paddingHorizontal: 16
         }}>
@@ -223,6 +236,22 @@ const PetraTracker = () => {
           }}>
             {t.tagline}
           </Text>
+          <View style={{ flexDirection: 'row', alignItems: 'left' }}>
+            <Text style={{ fontSize: 16, marginRight: 0, color: '#FFFFFF' }}>
+              🌐
+            </Text>
+            <Picker
+              selectedValue={locale}
+              onValueChange={handleLocaleChange}
+              mode="dropdown"
+              style={{ width: 40, height: 30, color: '#FFFFFF' }}
+              dropdownIconColor="#FFFFFF"
+            >
+              <Picker.Item label="🇩🇪" value="de" />
+              <Picker.Item label="🇬🇧" value="en" />
+            </Picker>
+          </View>
+
         </View>
 
           {/* Navigation */}

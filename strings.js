@@ -33,7 +33,7 @@ export default {
   en: {
     localeISO: "en-US",
     appName: "pe ‧‧ tra",
-    tagline: "periode tracker. private & anonymous.",
+    tagline: "period tracker. private & anonymous.",
     calendar: "Calendar",
     predictions: "Predictions",
     analysis: "Analysis",
