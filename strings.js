@@ -28,6 +28,7 @@ export default {
     save: "Speichern",
     addSymptom: "Symptom hinzufügen",
     date: "Datum",
+    editDay: "Tag bearbeiten",
     pickSymptom: "Symptom auswählen"
   },
   en: {
@@ -59,6 +60,7 @@ export default {
     save: "Save",
     addSymptom: "Add Symptom",
     date: "Date",
+    editDay: "Edit Day",
     pickSymptom: "Pick Symptom"
   }
 };

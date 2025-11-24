@@ -13,6 +13,7 @@ const PetraTracker = () => {
   const [cycles, setCycles] = useState([]);
   const [symptoms, setSymptoms] = useState([]);
   const [selectedDate, setSelectedDate] = useState(null);
+  const [showActionModal, setShowActionModal] = useState(false);
   const [showAddPeriod, setShowAddPeriod] = useState(false);
   const [showAddSymptom, setShowAddSymptom] = useState(false);
   const [activeTab, setActiveTab] = useState('calendar');
@@ -214,7 +215,7 @@ const PetraTracker = () => {
   const nextPeriod = predictNextPeriod();
   const nextOvulation = predictOvulation();
 
-  // Todo: Period/Symptom Modal: 1. auch bei Klick auf Datum 2. auch entfernen
+  // Todo: Period/Symptom Modal: auch entfernen
   return (
     <SafeAreaView className="flex-1 bg-white">
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
@@ -362,7 +363,7 @@ const PetraTracker = () => {
               <TouchableOpacity key={`day-${day}`} onPress={
                 () => {
                   setSelectedDate(day);
-                  setShowAddPeriod(true);
+                  setShowActionModal(true);
                 }} style={baseStyle}>
                 <Text style={{ color: textColor, fontWeight: dayInfo.isToday ? 'bold' : 'normal' }}>
                   {day}
@@ -668,12 +669,51 @@ const PetraTracker = () => {
     </View>
   )}
 
+  {/* Add Modal to add symptom or period for a given day*/}
+  <Modal visible={showActionModal} transparent animationType="fade">
+    <TouchableOpacity
+      className="flex-1 bg-black bg-opacity-50 items-center justify-center p-4"
+      onPress={() => setShowActionModal(false)}
+    >
+      <View className="bg-white rounded-lg p-6 w-full max-w-sm">
+        <View className="flex-row justify-between items-center mb-4">
+          <Text className="text-lg font-semibold">{t.editDay}</Text>
+          <TouchableOpacity onPress={() => setShowActionModal(false)}>
+            <Text className="text-gray-500 text-lg">×</Text>
+          </TouchableOpacity>
+        </View>
+
+        <View className="flex-row space-x-2">
+          <TouchableOpacity
+            onPress={() => { setShowActionModal(false); setShowAddPeriod(true); }}
+            className="flex-1 bg-red-500 py-2 px-4 rounded-lg items-center justify-center flex-row"
+          >
+            <Plus size={16} color="#fff" />
+            <Text className="text-white ml-2">{t.period}</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => { setShowActionModal(false); setShowAddSymptom(true); }}
+            className="flex-1 bg-orange-500 py-2 px-4 rounded-lg items-center justify-center flex-row"
+          >
+            <Plus size={16} color="#fff" />
+            <Text className="text-white ml-2">{t.symptom}</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </TouchableOpacity>
+  </Modal>
+
   {/* Add Period Modal */}
   {/* Todo: revamp */}
   <Modal visible={showAddPeriod} transparent animationType="fade">
     <View className="flex-1 bg-black bg-opacity-50 items-center justify-center p-4">
       <View className="bg-white rounded-lg p-6 w-full max-w-sm">
+      <View className="flex-row-reverse justify-between items-center mb-4">
+        <TouchableOpacity onPress={() => setShowAddPeriod(false)}>
+        <Text className="text-gray-500 text-lg">×</Text>
+        </TouchableOpacity>
         <Text className="text-lg font-semibold mb-4">{t.addPeriod}</Text>
+      </View>
         <View className="space-y-4">
           <View>
             <Text className="block text-sm font-medium text-gray-700 mb-1">{t.startDate}</Text>
@@ -702,8 +742,13 @@ const PetraTracker = () => {
   <Modal visible={showAddSymptom} transparent animationType="fade">
     <View className="flex-1 bg-black bg-opacity-50 items-center justify-center p-4">
       <View className="bg-white rounded-lg p-6 w-full max-w-sm max-h-[80vh]">
-        <ScrollView>
+        <View className="flex-row-reverse justify-between items-center mb-4">
+          <TouchableOpacity onPress={() => setShowAddSymptom(false)}>
+          <Text className="text-gray-500 text-lg">×</Text>
+          </TouchableOpacity>
           <Text className="text-lg font-semibold mb-4">{t.addSymptom}</Text>
+        </View>
+        <ScrollView>
           <View className="space-y-4">
             <View>
               <Text className="block text-sm font-medium text-gray-700 mb-1">{t.date}</Text>
