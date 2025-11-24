@@ -359,7 +359,11 @@ const PetraTracker = () => {
                             : '#374151';
 
             return (
-              <TouchableOpacity key={`day-${day}`} onPress={() => setSelectedDate(day)} style={baseStyle}>
+              <TouchableOpacity key={`day-${day}`} onPress={
+                () => {
+                  setSelectedDate(day);
+                  setShowAddPeriod(true);
+                }} style={baseStyle}>
                 <Text style={{ color: textColor, fontWeight: dayInfo.isToday ? 'bold' : 'normal' }}>
                   {day}
                 </Text>
