@@ -109,3 +109,6 @@ flow-typed/
 *.tsbuildinfo
 
 package-lock.json
+
+android/
+ios/
