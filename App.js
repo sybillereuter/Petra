@@ -37,7 +37,14 @@ const PetraTracker = () => {
   const allSymptoms = Object.values(symptomCategories).flatMap(cat => cat.symptoms);
 
   useEffect(() => {
-    initDatabase(setCycles, setSymptoms); // sqlite initialisierung (später)
+    const initializeDB = async () => {
+      try {
+        await initDatabase(setCycles, setSymptoms);
+      } catch (error) {
+        console.log('DB initialization failed:', error);
+      }
+    };
+    initializeDB();
   }, []);
 
   const today = new Date();
