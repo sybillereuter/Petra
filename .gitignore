@@ -107,3 +107,5 @@ flow-typed/
 
 # Optional: TypeScript
 *.tsbuildinfo
+
+package-lock.json
