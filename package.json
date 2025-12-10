@@ -25,8 +25,7 @@
     "react": "19.0.0",
     "react-native": "0.79.6",
     "react-native-reanimated": "~3.17.4",
-    "react-native-svg": "15.11.2",
-    "react-native-worklets": "^0.4.1"
+    "react-native-svg": "15.11.2"
   },
   "private": true
 }
