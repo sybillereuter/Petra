@@ -1,6 +1,7 @@
 import 'react-native-reanimated';
 import React, { useState, useEffect } from 'react';
 import { SafeAreaView, View, Text, Modal, TextInput, ScrollView, TouchableOpacity } from 'react-native';
+import LinearGradient from 'react-native-linear-gradient';
 import { db, initDatabase } from './db';
 import { Calendar, Plus, TrendingUp, Heart, Moon, Brain } from 'lucide-react-native';
 import { Picker } from '@react-native-picker/picker';
@@ -222,12 +223,16 @@ const PetraTracker = () => {
         <View className="flex-1 w-full bg-white">
 
         {/* Header */}
-        <View style={{
-          backgroundColor: '#EC4899',
-          paddingTop: 40,
-          paddingVertical: 16,
-          paddingHorizontal: 16
-        }}>
+        <LinearGradient
+          colors={['#F472B6', '#C084FC', '#818CF8']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 0 }}
+          style={{
+            paddingTop: 40,
+            paddingVertical: 16,
+            paddingHorizontal: 16
+          }}
+        >
           <Text style={{
             fontSize: 24,
             fontWeight: 'bold',
@@ -259,8 +264,7 @@ const PetraTracker = () => {
               <Picker.Item label="🇬🇧" value="en" />
             </Picker>
           </View>
-
-        </View>
+        </LinearGradient>
 
           {/* Navigation */}
           <View className="flex-row border-b bg-gray-50">
