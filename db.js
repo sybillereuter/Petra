@@ -1,7 +1,7 @@
 import * as SQLite from 'expo-sqlite';
 
 const openDatabase = async () => {
-  return await SQLite.openDatabaseAsync('periodtracker-v3.db');
+  return await SQLite.openDatabaseAsync('periodtracker-v5.db');
 };
 
 const initDatabase = async (setCycles, setSymptoms) => {
@@ -43,16 +43,10 @@ const initDatabase = async (setCycles, setSymptoms) => {
 const addCycle = async (startDate, type, length) => {
   const db = await openDatabase();
   try {
-    for (let i = 0; i < length; i++) {
-      const date = new Date(startDate);
-      date.setDate(date.getDate() + i);
-      const dateStr = date.toISOString().split('T')[0];
-
-      await db.runAsync(
-        'INSERT INTO cycles (date, type, length) VALUES (?, ?, ?)',
-        [dateStr, type, length]
-      );
-    }
+    await db.runAsync(
+      'INSERT INTO cycles (date, type, length) VALUES (?, ?, ?)',
+      [startDate, type, length]
+    );
   } catch (error) {
     console.error('Error adding cycle:', error);
     throw error;
