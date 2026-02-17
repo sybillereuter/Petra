@@ -2,7 +2,7 @@ import 'react-native-reanimated';
 import React, { useState, useEffect } from 'react';
 import { SafeAreaView, View, Text, Modal, TextInput, ScrollView, TouchableOpacity } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import { db, initDatabase } from './db';
+import { initDatabase, addCycle, addSymptom as addSymptomToDB } from './db';
 import { Calendar, Plus, TrendingUp, Heart, Moon, Brain } from 'lucide-react-native';
 import { Picker } from '@react-native-picker/picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -198,19 +198,25 @@ const PetraTracker = () => {
       return { cycle: hasPeriod ? { type: 'period' } : null, symptoms: daySymptoms, isOverdue, isFertile, isPredictedPeriod, isOvulation, isToday };
     };
 
-  const addPeriod = () => {
+  const addPeriod = async () => {
     const newCycle = { date: newPeriodDate, type: 'period', length: newPeriodLength };
+    await addCycle(newPeriodDate, 'period', newPeriodLength);
     setCycles([...cycles, newCycle].sort((a, b) => new Date(a.date) - new Date(b.date)));
     setShowAddPeriod(false);
   };
 
-  const addSymptom = () => {
+  const addSymptomHandler = async () => {
     if (!selectedSymptom) return;
     const category = Object.keys(symptomCategories).find(cat => symptomCategories[cat].symptoms.some(s => s.id === selectedSymptom));
     const newSymptom = { date: newSymptomDate, symptom: selectedSymptom, category: category };
-    setSymptoms([...symptoms, newSymptom]);
-    setShowAddSymptom(false);
-    setSelectedSymptom('');
+    try {
+      await addSymptomToDB(newSymptomDate, selectedSymptom, category);
+      setSymptoms([...symptoms, newSymptom]);
+      setShowAddSymptom(false);
+      setSelectedSymptom('');
+    } catch(e) {
+      console.error('DB write failed:', e);
+    }
   };
 
   const nextPeriod = predictNextPeriod();
@@ -318,7 +324,7 @@ const PetraTracker = () => {
           ))}
         </View>
 
-        {/* Calendar Days */}
+        {/* Calendar Days todo leite date an modal weiter*/}
         <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
           {generateCalendar().map((day, index) => {
             if (!day) return <View key={`empty-${index}`} style={{ width: `${100/7}%`, height: 48 }} />;
@@ -779,7 +785,7 @@ const PetraTracker = () => {
               <TouchableOpacity onPress={() => { setShowAddSymptom(false); setSelectedSymptom(''); }} className="flex-1 bg-gray-200 py-2 px-4 rounded-lg items-center">
                 <Text className="text-gray-800">{t.cancel}</Text>
               </TouchableOpacity>
-              <TouchableOpacity onPress={addSymptom} className="flex-1 bg-orange-500 py-2 px-4 rounded-lg items-center">
+              <TouchableOpacity onPress={addSymptomHandler} className="flex-1 bg-orange-500 py-2 px-4 rounded-lg items-center">
                 <Text className="text-white">{t.save}</Text>
               </TouchableOpacity>
             </View>
