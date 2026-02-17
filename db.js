@@ -1,7 +1,7 @@
 import * as SQLite from 'expo-sqlite';
 
 const openDatabase = async () => {
-  return await SQLite.openDatabaseAsync('periodtracker-v5.db');
+  return await SQLite.openDatabaseAsync('periodtracker-v7.db');
 };
 
 const initDatabase = async (setCycles, setSymptoms) => {
@@ -53,6 +53,16 @@ const addCycle = async (startDate, type, length) => {
   }
 };
 
+const deleteCycle = async (date) => {
+  const db = await openDatabase();
+  try {
+    await db.runAsync('DELETE FROM cycles WHERE date = ? AND type = ?', [date, 'period']);
+  } catch (error) {
+    console.error('Error deleting cycle:', error);
+    throw error;
+  }
+};
+
 const addSymptom = async (date, symptom, category) => {
   const db = await openDatabase();
   try {
@@ -63,6 +73,16 @@ const addSymptom = async (date, symptom, category) => {
     return result;
   } catch (error) {
     console.error('Error adding symptom:', error);
+    throw error;
+  }
+};
+
+const deleteSymptom = async (id) => {
+  const db = await openDatabase();
+  try {
+    await db.runAsync('DELETE FROM symptoms WHERE id = ?', [id]);
+  } catch (error) {
+    console.error('Error deleting symptom:', error);
     throw error;
   }
 };
@@ -87,4 +107,4 @@ const getSymptoms = async () => {
   }
 };
 
-export { openDatabase, initDatabase, addCycle, addSymptom, getCycles, getSymptoms };
+export { openDatabase, initDatabase, addCycle, deleteCycle, addSymptom, deleteSymptom, getCycles, getSymptoms };
