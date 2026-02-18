@@ -227,7 +227,8 @@ const PetraTracker = () => {
     const dateStr = clickedDateStr || todayStr;
     setSymptomDate(dateStr);
     setSymptomModalInitialDate(dateStr);
-    setSelectedSymptoms(new Set());
+    const alreadySaved = new Set(symptoms.filter(s => s.date === dateStr).map(s => s.symptom));
+    setSelectedSymptoms(alreadySaved);
     setShowAddSymptom(true);
   };
 
@@ -276,16 +277,25 @@ const PetraTracker = () => {
   const addSymptomHandler = async () => {
     if (selectedSymptoms.size === 0) return;
     const date = symptomDate || todayStr;
+    const alreadySavedIds = new Set(symptoms.filter(s => s.date === date).map(s => s.symptom));
+    const toDelete = symptoms.filter(s => s.date === date && !selectedSymptoms.has(s.symptom));
+    const toAdd = [...selectedSymptoms].filter(id => !alreadySavedIds.has(id));
     const newSymptomsList = [];
     try {
-      for (const symptomId of selectedSymptoms) {
+      for (const s of toDelete) {
+        await deleteSymptomFromDB(s.id);
+      }
+      for (const symptomId of toAdd) {
         const category = Object.keys(symptomCategories).find(cat =>
           symptomCategories[cat].symptoms.some(s => s.id === symptomId)
         );
         const result = await addSymptomToDB(date, symptomId, category);
         newSymptomsList.push({ id: result.lastInsertRowId, date, symptom: symptomId, category });
       }
-      setSymptoms([...symptoms, ...newSymptomsList]);
+      setSymptoms(prev => [
+        ...prev.filter(s => !(s.date === date && !selectedSymptoms.has(s.symptom))),
+        ...newSymptomsList
+      ]);
       setShowAddSymptom(false);
       setSelectedSymptoms(new Set());
     } catch(e) {
