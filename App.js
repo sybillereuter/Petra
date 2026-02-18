@@ -42,7 +42,6 @@ const PetraTracker = () => {
   const handleLocaleChange = async (value) => {
     setLocale(value);
     try {
-      // todo wait what warum hab ich denn hier async storage
       await AsyncStorage.setItem('userLocale', value);
     } catch (error) {
       console.log('Error saving locale:', error);
