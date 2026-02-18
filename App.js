@@ -275,7 +275,6 @@ const PetraTracker = () => {
   };
 
   const addSymptomHandler = async () => {
-    if (selectedSymptoms.size === 0) return;
     const date = symptomDate || todayStr;
     const alreadySavedIds = new Set(symptoms.filter(s => s.date === date).map(s => s.symptom));
     const toDelete = symptoms.filter(s => s.date === date && !selectedSymptoms.has(s.symptom));
@@ -300,16 +299,6 @@ const PetraTracker = () => {
       setSelectedSymptoms(new Set());
     } catch(e) {
       console.error('DB write failed:', e);
-    }
-  };
-
-  const deleteSymptomHandler = async (symptomId) => {
-    try {
-      await deleteSymptomFromDB(symptomId);
-      setSymptoms(symptoms.filter(s => s.id !== symptomId));
-      setShowActionModal(false);
-    } catch(e) {
-      console.error('Error deleting symptom:', e);
     }
   };
 
@@ -586,21 +575,6 @@ const PetraTracker = () => {
             <Text style={{ color: '#DC2626' }}>✏️ {t.period} bearbeiten</Text>
           </TouchableOpacity>
         )}
-
-        {selectedDayInfo?.symptoms?.map(s => {
-          const symptomName = Object.values(symptomCategories)
-            .flatMap(cat => cat.symptoms)
-            .find(sym => sym.id === s.symptom)?.name || s.symptom;
-          return (
-            <TouchableOpacity
-              key={s.id}
-              onPress={() => deleteSymptomHandler(s.id)}
-              style={{ backgroundColor: '#FFF7ED', borderWidth: 1, borderColor: '#FED7AA', borderRadius: 8, padding: 10, alignItems: 'center', marginBottom: 8 }}
-            >
-              <Text style={{ color: '#EA580C' }}>🗑 {symptomName} entfernen</Text>
-            </TouchableOpacity>
-          );
-        })}
 
         {/* Hinzufügen-Buttons */}
         <View style={{ flexDirection: 'row', gap: 8, marginTop: 4 }}>
