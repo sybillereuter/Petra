@@ -1,7 +1,7 @@
 import 'react-native-reanimated';
 import React, { useState, useEffect } from 'react';
 import { SafeAreaView, View, Text, ScrollView, TouchableOpacity } from 'react-native';
-import LinearGradient from 'react-native-linear-gradient';
+import { LinearGradient } from 'expo-linear-gradient';
 import { initDatabase, addCycle, deleteCycle, addSymptom as addSymptomToDB, deleteSymptom as deleteSymptomFromDB } from './db';
 import { Calendar, TrendingUp, Brain } from 'lucide-react-native';
 import { Picker } from '@react-native-picker/picker';

@@ -1,7 +1,12 @@
 import * as SQLite from 'expo-sqlite';
 
+let dbInstance = null;
+
 const openDatabase = async () => {
-  return await SQLite.openDatabaseAsync('periodtracker-v7.db');
+  if (!dbInstance) {
+    dbInstance = await SQLite.openDatabaseAsync('periodtracker-v7.db');
+  }
+  return dbInstance;
 };
 
 const initDatabase = async (setCycles, setSymptoms) => {

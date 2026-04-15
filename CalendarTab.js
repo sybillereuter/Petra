@@ -59,14 +59,16 @@ const CalendarTab = ({ currentDate, setCurrentDate, cycles, symptoms, todayStr, 
   const overdueDays = getOverdueDays(cycles);
 
   return (
-    <View className="p-4">
-      <View className="flex-row justify-between items-center mb-4">
-        <TouchableOpacity onPress={() => setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1))} className="p-2 rounded">
-          <Text className="text-gray-600">←</Text>
+    <View style={{ padding: 16 }}>
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+        <TouchableOpacity onPress={() => setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1))} style={{ padding: 8 }}>
+          <Text style={{ color: '#4B5563' }}>←</Text>
         </TouchableOpacity>
-        <Text className="text-lg font-semibold">{currentDate.toLocaleDateString(t.localeISO, { month: 'long', year: 'numeric' })}</Text>
-        <TouchableOpacity onPress={() => setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1))} className="p-2 rounded">
-          <Text className="text-gray-600">→</Text>
+        <Text style={{ fontSize: 18, fontWeight: '600' }}>
+          {currentDate.toLocaleDateString(t.localeISO, { month: 'long', year: 'numeric' })}
+        </Text>
+        <TouchableOpacity onPress={() => setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1))} style={{ padding: 8 }}>
+          <Text style={{ color: '#4B5563' }}>→</Text>
         </TouchableOpacity>
       </View>
 
@@ -138,18 +140,18 @@ const CalendarTab = ({ currentDate, setCurrentDate, cycles, symptoms, todayStr, 
       </View>
 
       {/* Legende */}
-      <View className="text-xs text-gray-600 mb-4 space-y-1">
-        <View className="flex-row items-center space-x-2">
-          <View className="w-3 h-3 bg-red-500 rounded" />
-          <Text>{t.period}</Text>
-          <View className="w-3 h-3 bg-red-100 border border-red-300 border-dashed rounded ml-4" />
-          <Text>{t.predictedPeriod}</Text>
+      <View style={{ marginBottom: 16, gap: 4 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+          <View style={{ width: 12, height: 12, backgroundColor: '#EF4444', borderRadius: 3 }} />
+          <Text style={{ fontSize: 12, color: '#4B5563' }}>{t.period}</Text>
+          <View style={{ width: 12, height: 12, backgroundColor: '#FEE2E2', borderWidth: 1, borderColor: '#FCA5A5', borderRadius: 3, marginLeft: 12 }} />
+          <Text style={{ fontSize: 12, color: '#4B5563' }}>{t.predictedPeriod}</Text>
         </View>
-        <View className="flex-row items-center space-x-2">
-          <View className="w-3 h-3 bg-blue-200 rounded" />
-          <Text>{t.ovulation}</Text>
-          <View className="w-3 h-3 bg-blue-100 rounded ml-4" />
-          <Text>{t.fertileDays}</Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+          <View style={{ width: 12, height: 12, backgroundColor: '#BFDBFE', borderRadius: 3 }} />
+          <Text style={{ fontSize: 12, color: '#4B5563' }}>{t.ovulation}</Text>
+          <View style={{ width: 12, height: 12, backgroundColor: '#DBEAFE', borderRadius: 3, marginLeft: 12 }} />
+          <Text style={{ fontSize: 12, color: '#4B5563' }}>{t.fertileDays}</Text>
         </View>
       </View>
 
@@ -163,14 +165,18 @@ const CalendarTab = ({ currentDate, setCurrentDate, cycles, symptoms, todayStr, 
       )}
 
       {/* Action Buttons */}
-      <View className="flex-row space-x-2">
-        <TouchableOpacity onPress={() => openPeriodModal(null)} className="flex-1 bg-red-500 py-2 px-4 rounded-lg items-center justify-center flex-row">
+      <View style={{ flexDirection: 'row', gap: 8 }}>
+        <TouchableOpacity
+          onPress={() => openPeriodModal(null)}
+          style={{ flex: 1, backgroundColor: '#EF4444', paddingVertical: 8, paddingHorizontal: 16, borderRadius: 8, alignItems: 'center', justifyContent: 'center', flexDirection: 'row' }}>
           <Plus size={16} color="#fff" />
-          <Text className="text-white ml-2">{t.period}</Text>
+          <Text style={{ color: '#ffffff', marginLeft: 8 }}>{t.period}</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => openSymptomModal(null)} className="flex-1 bg-orange-500 py-2 px-4 rounded-lg items-center justify-center flex-row">
+        <TouchableOpacity
+          onPress={() => openSymptomModal(null)}
+          style={{ flex: 1, backgroundColor: '#F97316', paddingVertical: 8, paddingHorizontal: 16, borderRadius: 8, alignItems: 'center', justifyContent: 'center', flexDirection: 'row' }}>
           <Plus size={16} color="#fff" />
-          <Text className="text-white ml-2">{t.symptom}</Text>
+          <Text style={{ color: '#ffffff', marginLeft: 8 }}>{t.symptom}</Text>
         </TouchableOpacity>
       </View>
     </View>
