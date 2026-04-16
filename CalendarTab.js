@@ -157,8 +157,8 @@ const CalendarTab = ({ currentDate, setCurrentDate, cycles, symptoms, todayStr, 
 
       {/* Überfällig Warnung */}
       {overdueDays.length > 0 && (
-        <View className="bg-blue-100 border border-blue-300 rounded p-3 mb-4">
-          <Text className="text-blue-800 font-bold text-center">
+        <View style={{ backgroundColor: '#DBEAFE', borderWidth: 1, borderColor: '#93C5FD', borderRadius: 6, padding: 12, marginBottom: 16 }}>
+          <Text style={{ color: '#1E40AF', fontWeight: 'bold', textAlign: 'center' }}>
             {t.overdueWarning.replace('{days}', overdueDays.length)}
           </Text>
         </View>
