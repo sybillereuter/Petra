@@ -20,7 +20,7 @@ const ActionModal = ({ visible, selectedDayInfo, t, symptomCategories, onClose, 
               onPress={() => onEditPeriod(selectedDayInfo.dateStr)}
               style={{ backgroundColor: '#FEF2F2', borderWidth: 1, borderColor: '#FECACA', borderRadius: 8, padding: 10, alignItems: 'center', marginBottom: 8 }}
             >
-              <Text style={{ color: '#DC2626' }}>✏️ {t.period} bearbeiten</Text>
+              <Text style={{ color: '#DC2626' }}>✏️ {t.editPeriod}</Text>
             </TouchableOpacity>
           )}
 
