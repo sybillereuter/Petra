@@ -82,13 +82,32 @@ const PetraTracker = () => {
   };
 
   const editPeriodHandler = (dateStr) => {
-    const existing = cycles.find(c => c.type === 'period' && c.date === dateStr);
+    const clickedDate = new Date(dateStr);
+    const existing = cycles.find(c => {
+      if (c.type !== 'period') return false;
+      const startDate = new Date(c.date);
+      const endDate = new Date(startDate);
+      endDate.setDate(startDate.getDate() + c.length - 1);
+      return clickedDate >= startDate && clickedDate <= endDate;
+    });
     setShowActionModal(false);
     setPeriodOriginalDate(existing ? existing.date : null);
     setPeriodStartDate(existing ? existing.date : dateStr);
     setPeriodLength(existing ? existing.length : 5);
     setPeriodModalInitialDate(existing ? existing.date : dateStr);
     setShowAddPeriod(true);
+  };
+
+  const deletePeriodHandler = async () => {
+    if (!periodOriginalDate) return;
+    try {
+      await deleteCycle(periodOriginalDate);
+      setCycles(prev => prev.filter(c => !(c.type === 'period' && c.date === periodOriginalDate)));
+      setPeriodOriginalDate(null);
+      setShowAddPeriod(false);
+    } catch (e) {
+      console.error('Error deleting period:', e);
+    }
   };
 
   const savePeriod = async () => {
@@ -270,9 +289,11 @@ const PetraTracker = () => {
             periodLength={periodLength}
             setPeriodLength={setPeriodLength}
             periodModalInitialDate={periodModalInitialDate}
+            periodOriginalDate={periodOriginalDate}
             t={t}
             onClose={() => setShowAddPeriod(false)}
             onSave={savePeriod}
+            onDelete={deletePeriodHandler}
           />
           <SymptomModal
             visible={showAddSymptom}

@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, Modal, TouchableOpacity } from 'react-native';
 import DatePickerCalendar from './DatePickerCalendar';
 
-const PeriodModal = ({ visible, periodStartDate, setPeriodStartDate, periodLength, setPeriodLength, periodModalInitialDate, t, onClose, onSave }) => {
+const PeriodModal = ({ visible, periodStartDate, setPeriodStartDate, periodLength, setPeriodLength, periodModalInitialDate, periodOriginalDate, t, onClose, onSave, onDelete }) => {
   return (
     // Perioden-Modal
     // Todo: revamp weiter testen
@@ -10,7 +10,7 @@ const PeriodModal = ({ visible, periodStartDate, setPeriodStartDate, periodLengt
       <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', alignItems: 'center', padding: 16 }}>
         <View style={{ backgroundColor: 'white', borderRadius: 12, padding: 20, width: '100%', maxWidth: 380 }}>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-            <Text style={{ fontSize: 18, fontWeight: '600' }}>{t.addPeriod}</Text>
+            <Text style={{ fontSize: 18, fontWeight: '600' }}>{periodOriginalDate ? t.editPeriod : t.addPeriod}</Text>
             <TouchableOpacity onPress={onClose}>
               <Text style={{ color: '#6B7280', fontSize: 22 }}>×</Text>
             </TouchableOpacity>
@@ -41,6 +41,12 @@ const PeriodModal = ({ visible, periodStartDate, setPeriodStartDate, periodLengt
               <Text style={{ fontSize: 20, color: '#374151' }}>+</Text>
             </TouchableOpacity>
           </View>
+
+          {periodOriginalDate && (
+            <TouchableOpacity onPress={onDelete} style={{ backgroundColor: '#FEE2E2', padding: 10, borderRadius: 8, alignItems: 'center', marginBottom: 8 }}>
+              <Text style={{ color: '#DC2626', fontWeight: '600' }}>{t.deletePeriod}</Text>
+            </TouchableOpacity>
+          )}
 
           <View style={{ flexDirection: 'row', gap: 8 }}>
             <TouchableOpacity onPress={onClose} style={{ flex: 1, backgroundColor: '#E5E7EB', padding: 10, borderRadius: 8, alignItems: 'center' }}>
