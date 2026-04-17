@@ -5,6 +5,18 @@ import {
   getAllOvulations, getFertileDays, getPredictedPeriodDays, getOverdueDays
 } from './cycleUtils';
 
+const getCycleDay = (dateStr, cycles) => {
+  const date = new Date(dateStr);
+  const periodCycles = cycles
+    .filter(c => c.type === 'period')
+    .sort((a, b) => new Date(b.date) - new Date(a.date));
+  const lastPeriod = periodCycles.find(c => new Date(c.date) <= date);
+  if (!lastPeriod) return null;
+  const start = new Date(lastPeriod.date);
+  const diff = Math.floor((date - start) / (1000 * 60 * 60 * 24));
+  return diff + 1;
+};
+
 const CalendarTab = ({ currentDate, setCurrentDate, cycles, symptoms, todayStr, t, openPeriodModal, openSymptomModal, onDayPress }) => {
 
   const dateToStr = (year, month, day) =>
@@ -57,9 +69,53 @@ const CalendarTab = ({ currentDate, setCurrentDate, cycles, symptoms, todayStr, 
   };
 
   const overdueDays = getOverdueDays(cycles);
+  const todayCycleDay = getCycleDay(todayStr, cycles);
+
+  const todayInfo = getDayInfo(new Date(todayStr).getDate());
+  const todayIsPeriod = todayInfo?.cycle?.type === 'period';
+  const todayIsOverdue = overdueDays.length > 0;
+  const todayIsOvulation = todayInfo?.isOvulation;
+  const todayIsFertile = todayInfo?.isFertile;
+
+  const cycleDayBoxStyle = (() => {
+    if (todayIsPeriod) return {
+      bg: '#FDF2F8', border: '#DC2626',
+      labelColor: '#DC2626', valueColor: '#DC2626'
+    };
+    if (todayIsOverdue) return {
+      bg: '#506896', border: '#394a6b',
+      labelColor: '#BFDBFE', valueColor: '#FFFFFF'
+    };
+    if (todayIsOvulation || todayIsFertile) return {
+      bg: '#DBEAFE', border: '#93C5FD',
+      labelColor: '#1E40AF', valueColor: '#1E3A8A'
+    };
+    return {
+      bg: '#FFFFFF', border: '#E5E7EB',
+      labelColor: '#6B7280', valueColor: '#111827'
+    };
+  })();
 
   return (
     <View style={{ padding: 16 }}>
+
+      {/* Zyklustag-Anzeige */}
+      {(todayCycleDay !== null || todayIsOverdue) && (
+        <View style={{ backgroundColor: cycleDayBoxStyle.bg, borderWidth: 1, borderColor: cycleDayBoxStyle.border, borderRadius: 10, padding: 14, marginBottom: 16, alignItems: 'center' }}>
+          <Text style={{ fontSize: 13, color: cycleDayBoxStyle.labelColor, marginBottom: 2 }}>{t.today}</Text>
+          {todayCycleDay !== null && (
+            <Text style={{ fontSize: 22, fontWeight: 'bold', color: cycleDayBoxStyle.valueColor }}>
+              {t.cycleDay.replace('{day}', todayCycleDay)}
+            </Text>
+          )}
+          {todayIsOverdue && (
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: cycleDayBoxStyle.valueColor, marginTop: todayCycleDay !== null ? 4 : 0 }}>
+              ⚠️ {t.overdueWarning.replace('{days}', overdueDays.length)}
+            </Text>
+          )}
+        </View>
+      )}
+
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
         <TouchableOpacity onPress={() => setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1))} style={{ padding: 8 }}>
           <Text style={{ color: '#4B5563' }}>←</Text>
@@ -154,15 +210,6 @@ const CalendarTab = ({ currentDate, setCurrentDate, cycles, symptoms, todayStr, 
           <Text style={{ fontSize: 12, color: '#4B5563' }}>{t.fertileDays}</Text>
         </View>
       </View>
-
-      {/* Überfällig Warnung */}
-      {overdueDays.length > 0 && (
-        <View style={{ backgroundColor: '#DBEAFE', borderWidth: 1, borderColor: '#93C5FD', borderRadius: 6, padding: 12, marginBottom: 16 }}>
-          <Text style={{ color: '#1E40AF', fontWeight: 'bold', textAlign: 'center' }}>
-            {t.overdueWarning.replace('{days}', overdueDays.length)}
-          </Text>
-        </View>
-      )}
 
       {/* Action Buttons */}
       <View style={{ flexDirection: 'row', gap: 8 }}>

@@ -2,14 +2,39 @@ import React from 'react';
 import { View, Text, Modal, TouchableOpacity } from 'react-native';
 import { Plus } from 'lucide-react-native';
 
+const getCycleDay = (dateStr, cycles) => {
+  const date = new Date(dateStr);
+  const periodCycles = cycles
+    .filter(c => c.type === 'period')
+    .sort((a, b) => new Date(b.date) - new Date(a.date));
+  const lastPeriod = periodCycles.find(c => new Date(c.date) <= date);
+  if (!lastPeriod) return null;
+  const start = new Date(lastPeriod.date);
+  const diff = Math.floor((date - start) / (1000 * 60 * 60 * 24));
+  return diff + 1;
+};
+
 // todo "periode bearbeiten" macht "+ periode" und eigentlich auch "+ symptom" obsolet, oder?
-const ActionModal = ({ visible, selectedDayInfo, t, symptomCategories, onClose, onEditPeriod, onOpenPeriodModal, onOpenSymptomModal }) => {
+const ActionModal = ({ visible, selectedDayInfo, cycles, t, symptomCategories, onClose, onEditPeriod, onOpenPeriodModal, onOpenSymptomModal }) => {
+  const cycleDay = selectedDayInfo?.dateStr ? getCycleDay(selectedDayInfo.dateStr, cycles) : null;
+
+  const formattedDate = selectedDayInfo?.dateStr
+    ? new Date(selectedDayInfo.dateStr).toLocaleDateString(t.localeISO, { day: 'numeric', month: 'long', year: 'numeric' })
+    : '';
+
   return (
     <Modal visible={visible} transparent animationType="fade">
       <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', alignItems: 'center', padding: 16 }}>
         <View style={{ backgroundColor: 'white', borderRadius: 12, padding: 20, width: '100%', maxWidth: 380 }}>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-            <Text style={{ fontSize: 17, fontWeight: '600' }}>{selectedDayInfo?.dateStr}</Text>
+            <View>
+              <Text style={{ fontSize: 17, fontWeight: '600' }}>{formattedDate}</Text>
+              {cycleDay !== null && (
+                <Text style={{ fontSize: 13, color: '#BE185D', marginTop: 2 }}>
+                  {t.cycleDay.replace('{day}', cycleDay)}
+                </Text>
+              )}
+            </View>
             <TouchableOpacity onPress={onClose}>
               <Text style={{ color: '#6B7280', fontSize: 22 }}>×</Text>
             </TouchableOpacity>

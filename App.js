@@ -199,7 +199,7 @@ const PetraTracker = () => {
 
   return (
     <SafeAreaView className="flex-1 bg-white">
-      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+      <ScrollView contentContainerStyle={{ flexGrow: 1, paddingBottom: 32 }}>
         <View className="flex-1 w-full bg-white">
 
         {/* Header */}
@@ -275,6 +275,7 @@ const PetraTracker = () => {
           <ActionModal
             visible={showActionModal}
             selectedDayInfo={selectedDayInfo}
+            cycles={cycles}
             t={t}
             symptomCategories={symptomCategories}
             onClose={() => setShowActionModal(false)}
