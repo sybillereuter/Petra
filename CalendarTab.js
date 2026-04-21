@@ -71,11 +71,17 @@ const CalendarTab = ({ currentDate, setCurrentDate, cycles, symptoms, todayStr, 
   const overdueDays = getOverdueDays(cycles);
   const todayCycleDay = getCycleDay(todayStr, cycles);
 
-  const todayInfo = getDayInfo(new Date(todayStr).getDate());
-  const todayIsPeriod = todayInfo?.cycle?.type === 'period';
-  const todayIsOverdue = overdueDays.length > 0;
-  const todayIsOvulation = todayInfo?.isOvulation;
-  const todayIsFertile = todayInfo?.isFertile;
+  const todayDate = new Date(todayStr);
+  const todayIsPeriod = cycles.some(cycle => {
+    if (cycle.type !== 'period') return false;
+    const startDate = new Date(cycle.date);
+    const endDate = new Date(startDate);
+    endDate.setDate(startDate.getDate() + cycle.length - 1);
+    return todayDate >= startDate && todayDate <= endDate;
+  });
+  const todayIsOverdue = overdueDays.length > 0 && !todayIsPeriod;
+  const todayIsOvulation = getAllOvulations(cycles).some(ov => ov.toDateString() === todayDate.toDateString());
+  const todayIsFertile = getFertileDays(cycles).some(fd => fd.toDateString() === todayDate.toDateString());
 
   const cycleDayBoxStyle = (() => {
     if (todayIsPeriod) return {
