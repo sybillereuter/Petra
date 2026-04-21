@@ -16,8 +16,8 @@ const PredictionsTab = ({ cycles, t }) => {
           <Text style={{ fontWeight: '600', color: '#991B1B', marginLeft: 8, fontSize: 16 }}>{t.nextPeriod}</Text>
         </View>
         <Text style={{ color: '#B91C1C', fontSize: 16, marginBottom: 4 }}>{nextPeriod ? formatDate(nextPeriod) : t.noData}</Text>
-        <Text style={{ fontSize: 14, color: '#DC2626', marginTop: 4 }}>{t.cycleLength.replace('{days}', getAverageCycleLength(cycles))}</Text>
-      </View>
+        <Text style={{ fontSize: 14, color: '#DC2626', marginTop: 4 }}>{`∅ ${t.cycleLength.replace('{days}', getAverageCycleLength(cycles))}`}</Text>
+        </View>
       <View style={{ backgroundColor: '#EFF6FF', borderWidth: 1, borderColor: '#BFDBFE', borderRadius: 8, padding: 16, minHeight: 120 }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
           <Moon size={18} color="#2563EB" />

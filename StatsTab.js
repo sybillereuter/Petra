@@ -2,15 +2,39 @@ import React from 'react';
 import { View, Text } from 'react-native';
 import { getAverageCycleLength } from './cycleUtils';
 
+const getMinMaxCycleLength = (cycles) => {
+  const periodCycles = cycles
+    .filter(c => c.type === 'period')
+    .sort((a, b) => new Date(a.date) - new Date(b.date));
+
+  if (periodCycles.length < 2) return null;
+
+  const lengths = [];
+  for (let i = 1; i < periodCycles.length; i++) {
+    const prev = new Date(periodCycles[i - 1].date);
+    const curr = new Date(periodCycles[i].date);
+    const diff = Math.round((curr - prev) / (1000 * 60 * 60 * 24));
+    lengths.push(diff);
+  }
+
+  const last5 = lengths.slice(-5);
+  return { min: Math.min(...last5), max: Math.max(...last5) };
+};
+
 const StatsTab = ({ cycles, symptoms, symptomCategories, t }) => {
+  const minMax = getMinMaxCycleLength(cycles);
+
   return (
     <View style={{ flex: 1, padding: 16, minHeight: 400 }}>
       <View style={{ backgroundColor: '#FDF2F8', borderWidth: 1, borderColor: '#FBCFE8', borderRadius: 8, padding: 16, marginBottom: 16, minHeight: 120 }}>
         <Text style={{ fontWeight: '600', color: '#9D174D', marginBottom: 12, fontSize: 16 }}>{t.yourStats}</Text>
         <View style={{ flexDirection: 'row', justifyContent: 'space-around', paddingVertical: 8 }}>
           <View style={{ alignItems: 'center', flex: 1 }}>
-            <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#DB2777' }}>{getAverageCycleLength(cycles)}</Text>
+            <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#DB2777' }}>∅ {getAverageCycleLength(cycles)}</Text>
             <Text style={{ fontSize: 14, color: '#EC4899', textAlign: 'center' }}>{t.cycleDays}</Text>
+            {minMax && (
+              <Text style={{ fontSize: 12, color: '#9D174D', marginTop: 4 }}>{minMax.min}–{minMax.max} {t.days}</Text>
+            )}
           </View>
           <View style={{ alignItems: 'center', flex: 1 }}>
             <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#9333EA' }}>{cycles.length}</Text>
