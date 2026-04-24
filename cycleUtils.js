@@ -3,6 +3,12 @@ const parseLocalDate = (dateStr) => {
   return new Date(year, month - 1, day, 0, 0, 0, 0);
 };
 
+const todayMidnight = () => {
+  const d = new Date();
+  d.setHours(0, 0, 0, 0);
+  return d;
+};
+
 export const getAverageCycleLength = (cycles) => {
   if (cycles.length < 2) return 28;
   const lengths = [];
@@ -19,12 +25,6 @@ export const getNextCycleStart = (startDate, cycles) => {
   const next = new Date(startDate);
   next.setDate(startDate.getDate() + cycleLength);
   return next;
-};
-
-const todayMidnight = () => {
-  const d = new Date();
-  d.setHours(0, 0, 0, 0);
-  return d;
 };
 
 export const predictNextPeriod = (cycles) => {
@@ -45,24 +45,16 @@ export const getOverdueDays = (cycles) => {
   const expectedNext = new Date(lastPeriod);
   expectedNext.setDate(lastPeriod.getDate() + getAverageCycleLength(cycles));
 
-  if (expectedNext >= todayMidnight()) return [];
+  const now = todayMidnight();
+  if (expectedNext >= now) return [];
 
   const overdue = [];
   let current = new Date(expectedNext);
-  const now = todayMidnight();
   while (current <= now) {
     overdue.push(new Date(current));
     current.setDate(current.getDate() + 1);
   }
   return overdue;
-};
-
-export const predictOvulation = (cycles) => {
-  const nextPeriod = predictNextPeriod(cycles);
-  if (!nextPeriod) return null;
-  const ovulation = new Date(nextPeriod);
-  ovulation.setDate(nextPeriod.getDate() - 14);
-  return ovulation;
 };
 
 export const getAllOvulations = (cycles) => {
