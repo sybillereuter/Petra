@@ -39,6 +39,14 @@ export const predictNextPeriod = (cycles) => {
   return nextPeriod >= todayMidnight() ? nextPeriod : null;
 };
 
+export const predictOvulation = (cycles) => {
+  const nextPeriod = predictNextPeriod(cycles);
+  if (!nextPeriod) return null;
+  const ovulation = new Date(nextPeriod);
+  ovulation.setDate(nextPeriod.getDate() - 14);
+  return ovulation;
+};
+
 export const getOverdueDays = (cycles) => {
   if (!cycles || cycles.length === 0) return [];
   const lastPeriod = parseLocalDate(cycles[cycles.length - 1].date);
