@@ -266,7 +266,13 @@ const PetraTracker = () => {
             />
           )}
           {activeTab === 'predictions' && (
-            <PredictionsTab cycles={cycles} t={t} />
+            <PredictionsTab
+              cycles={cycles}
+              symptoms={symptoms}
+              symptomCategories={symptomCategories}
+              t={t}
+              locale={locale}
+            />
           )}
           {activeTab === 'stats' && (
             <StatsTab cycles={cycles} symptoms={symptoms} symptomCategories={symptomCategories} t={t} />

@@ -1,11 +1,13 @@
 import React from 'react';
 import { View, Text } from 'react-native';
-import { Heart, Moon } from 'lucide-react-native';
+import { Heart, Moon, FlaskConical } from 'lucide-react-native';
 import { predictNextPeriod, predictOvulation, getAverageCycleLength } from './cycleUtils';
+import { getPhasePrediction } from './cyclePhase';
 
-const PredictionsTab = ({ cycles, t }) => {
+const PredictionsTab = ({ cycles, symptoms, symptomCategories, t, locale }) => {
   const nextPeriod = predictNextPeriod(cycles);
   const nextOvulation = predictOvulation(cycles);
+  const prediction = getPhasePrediction(cycles, symptoms, symptomCategories, locale);
   const formatDate = (date) => date.toLocaleDateString(t.localeISO, { day: '2-digit', month: '2-digit', year: 'numeric' });
 
   return (
@@ -17,8 +19,9 @@ const PredictionsTab = ({ cycles, t }) => {
         </View>
         <Text style={{ color: '#B91C1C', fontSize: 16, marginBottom: 4 }}>{nextPeriod ? formatDate(nextPeriod) : t.noData}</Text>
         <Text style={{ fontSize: 14, color: '#DC2626', marginTop: 4 }}>{`∅ ${t.cycleLength.replace('{days}', getAverageCycleLength(cycles))}`}</Text>
-        </View>
-      <View style={{ backgroundColor: '#EFF6FF', borderWidth: 1, borderColor: '#BFDBFE', borderRadius: 8, padding: 16, minHeight: 120 }}>
+      </View>
+
+      <View style={{ backgroundColor: '#EFF6FF', borderWidth: 1, borderColor: '#BFDBFE', borderRadius: 8, padding: 16, marginBottom: 16, minHeight: 120 }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
           <Moon size={18} color="#2563EB" />
           <Text style={{ fontWeight: '600', color: '#1E40AF', marginLeft: 8, fontSize: 16 }}>{t.ovulation}</Text>
@@ -28,6 +31,23 @@ const PredictionsTab = ({ cycles, t }) => {
           {t.fertileDays}: {nextOvulation ? `${formatDate(new Date(nextOvulation.getTime() - 2*24*60*60*1000))} - ${formatDate(new Date(nextOvulation.getTime() + 2*24*60*60*1000))}` : t.unknown}
         </Text>
       </View>
+
+      {prediction && (
+        <View style={{ backgroundColor: '#F5F3FF', borderWidth: 1, borderColor: '#DDD6FE', borderRadius: 8, padding: 16 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
+            <FlaskConical size={18} color="#7C3AED" />
+            <Text style={{ fontWeight: '600', color: '#5B21B6', marginLeft: 8, fontSize: 16 }}>{t.possibleSymptoms}</Text>
+          </View>
+          <Text style={{ fontSize: 13, color: '#6D28D9', marginBottom: 10 }}>{prediction.intro}</Text>
+          <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
+            {prediction.symptoms.map(s => (
+              <View key={s.id} style={{ backgroundColor: '#EDE9FE', borderRadius: 16, paddingHorizontal: 10, paddingVertical: 4 }}>
+                <Text style={{ fontSize: 13, color: '#5B21B6' }}>{s.name}</Text>
+              </View>
+            ))}
+          </View>
+        </View>
+      )}
     </View>
   );
 };
