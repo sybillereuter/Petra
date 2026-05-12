@@ -7,7 +7,7 @@ import { getPhasePrediction } from './cyclePhase';
 const PredictionsTab = ({ cycles, symptoms, symptomCategories, t, locale }) => {
   const nextPeriod = predictNextPeriod(cycles);
   const nextOvulation = predictOvulation(cycles);
-  const prediction = getPhasePrediction(cycles, symptoms, symptomCategories, locale);
+  const prediction = getPhasePrediction(cycles, symptoms, symptomCategories, t);
   const formatDate = (date) => date.toLocaleDateString(t.localeISO, { day: '2-digit', month: '2-digit', year: 'numeric' });
 
   return (

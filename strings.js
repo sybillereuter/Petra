@@ -35,7 +35,20 @@ export default {
     addSymptom: "Symptom hinzufügen",
     date: "Datum",
     editDay: "Tag bearbeiten",
-    pickSymptom: "Symptom auswählen"
+    pickSymptom: "Symptom auswählen",
+    phaseLabels: {
+      period_day1: 'Erster Periodentag',
+      period: 'Periode',
+      follicular: 'Follikelphase',
+      pre_ovulation: 'Vor dem Eisprung',
+      ovulation: 'Eisprung',
+      post_ovulation: 'Nach dem Eisprung',
+      early_luteal: 'Frühe Lutealphase',
+      late_luteal: 'Späte Lutealphase',
+    },
+    phaseIntroTypical: 'Typische Symptome in dieser Phase ({phase}):',
+    phaseIntroByDay: 'An Tag {day} hast du oft:',
+    phaseIntroTracked: 'In dieser Phase ({phase}) hast du oft:',
   },
   en: {
     localeISO: "en-US",
@@ -73,6 +86,19 @@ export default {
     addSymptom: "Add Symptom",
     date: "Date",
     editDay: "Edit Day",
-    pickSymptom: "Pick Symptom"
+    pickSymptom: "Pick Symptom",
+    phaseLabels: {
+      period_day1: 'First Day of your Period',
+      period: 'Period',
+      follicular: 'Follicular Phase',
+      pre_ovulation: 'Pre-Ovulation',
+      ovulation: 'Ovulation',
+      post_ovulation: 'Post-Ovulation',
+      early_luteal: 'Early Luteal Phase',
+      late_luteal: 'Late Luteal Phase',
+    },
+    phaseIntroTypical: 'Typical symptoms during this phase ({phase}):',
+    phaseIntroByDay: 'On day {day} you often experience:',
+    phaseIntroTracked: 'During this phase ({phase}) you often experience:',
   }
 };

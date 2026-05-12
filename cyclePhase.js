@@ -73,39 +73,15 @@ const PHASE_SYMPTOMS = {
   late_luteal: ['sore_breast', 'cravings', 'tired', 'brain_fog', 'sad', 'angry', 'bloated', 'weight', 'sleeplessness', 'night_sweats', 'acne', 'headache'],
 };
 
-const PHASE_LABELS = {
-  de: {
-    period_day1: 'Erster Periodetag',
-    period: 'Periode',
-    follicular: 'Follikelphase',
-    pre_ovulation: 'Vor dem Eisprung',
-    ovulation: 'Eisprung',
-    post_ovulation: 'Nach dem Eisprung',
-    early_luteal: 'Frühe Lutealphase',
-    late_luteal: 'Späte Lutealphase',
-  },
-  en: {
-    period_day1: 'First Day of Period',
-    period: 'Period',
-    follicular: 'Follicular Phase',
-    pre_ovulation: 'Pre-Ovulation',
-    ovulation: 'Ovulation',
-    post_ovulation: 'Post-Ovulation',
-    early_luteal: 'Early Luteal Phase',
-    late_luteal: 'Late Luteal Phase',
-  },
-};
-
-export const getPhasePrediction = (cycles, symptoms, symptomCategories, locale) => {
+export const getPhasePrediction = (cycles, symptoms, symptomCategories, t) => {
   const phaseInfo = getCurrentPhase(cycles);
   if (!phaseInfo) return null;
 
   const { phase } = phaseInfo;
   const typicalSymptomIds = PHASE_SYMPTOMS[phase] || [];
-  const phaseLabel = PHASE_LABELS[locale]?.[phase] || phase;
+  const phaseLabel = t.phaseLabels?.[phase] || phase;
 
   // TODO zähle wie oft das historisch aufgetreten ist, testen mit mehr daten (irgendwann trimmen?)
-  const today = todayMidnight();
   const sortedPeriods = cycles
     .filter(c => c.type === 'period')
     .sort((a, b) => parseLocalDate(a.date) - parseLocalDate(b.date));
@@ -141,20 +117,13 @@ export const getPhasePrediction = (cycles, symptoms, symptomCategories, locale) 
     .map(id => allSymptoms.find(s => s.id === id))
     .filter(Boolean);
 
-  // TODO schönere Anmoderation..?
   let intro;
   if (!hasTrackedData || cycleCount < 2) {
-    intro = locale === 'de'
-      ? `Typische Symptome in der ${phaseLabel}:`
-      : `Typical symptoms during the ${phaseLabel}:`;
+    intro = t.phaseIntroTypical.replace('{phase}', phaseLabel);
   } else if (cycleCount >= 5 && phaseInfo.day) {
-    intro = locale === 'de'
-      ? `An Tag ${phaseInfo.day} hast du oft:`
-      : `On day ${phaseInfo.day} you often experience:`;
+    intro = t.phaseIntroByDay.replace('{day}', phaseInfo.day);
   } else {
-    intro = locale === 'de'
-      ? `In der ${phaseLabel} hast du oft:`
-      : `During the ${phaseLabel} you often experience:`;
+    intro = t.phaseIntroTracked.replace('{phase}', phaseLabel);
   }
 
   return { intro, symptoms: displaySymptoms, phaseLabel };
@@ -177,7 +146,6 @@ const getCurrentPhaseForDate = (date, cycles) => {
 
     if (i < sortedPeriods.length - 1) {
       const nextPeriodStart = parseLocalDate(sortedPeriods[i + 1].date);
-      const avgCycle = daysDiff(nextPeriodStart, periodStart);
       const ovulation = new Date(nextPeriodStart);
       ovulation.setDate(nextPeriodStart.getDate() - 14);
 
