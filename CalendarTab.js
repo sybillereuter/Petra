@@ -49,10 +49,11 @@ const CalendarTab = ({ currentDate, setCurrentDate, cycles, symptoms, todayStr, 
 
   const today = useMemo(() => parseLocalDate(todayStr), [todayStr]);
 
-  const { fertileDays, allOvulations, nextOvulation, nextFertileStart, nextFertileEnd, lastPeriodCycle, overdueDays } = useMemo(() => {
+  const { fertileDays, allOvulations, nextOvulation, nextFertileStart, nextFertileEnd, lastPeriodCycle, overdueDays, isNextOvulationConfirmed } = useMemo(() => {
     const fertileDays = getFertileDays(cycles);
     const allOvulations = getAllOvulations(cycles);
     const overdueDays = getOverdueDays(cycles);
+    const predictedPeriodDays = getPredictedPeriodDays(cycles);
 
     const sortedPeriods = cycles
       .filter(c => c.type === 'period')
@@ -68,7 +69,31 @@ const CalendarTab = ({ currentDate, setCurrentDate, cycles, symptoms, todayStr, 
     const nextFertileStart = nextOvulation ? (() => { const d = new Date(nextOvulation); d.setDate(d.getDate() - 2); return d; })() : null;
     const nextFertileEnd = nextOvulation ? (() => { const d = new Date(nextOvulation); d.setDate(d.getDate() + 2); return d; })() : null;
 
-    return { fertileDays, allOvulations, nextOvulation, nextFertileStart, nextFertileEnd, lastPeriodCycle, overdueDays };
+    const lastPeriodEnd = lastPeriodCycle ? (() => {
+      const start = parseLocalDate(lastPeriodCycle.date);
+      const end = new Date(start);
+      end.setDate(start.getDate() + lastPeriodCycle.length - 1);
+      return end;
+    })() : null;
+
+    const todayDate = parseLocalDate(todayStr);
+
+    const nextPredictedPeriodBeforeOvulation = nextOvulation && predictedPeriodDays.some(pd => {
+      const n = new Date(pd);
+      n.setHours(0, 0, 0, 0);
+      return n > todayDate && n < nextOvulation;
+    });
+
+    const isNextOvulationConfirmed = !!(
+      nextOvulation &&
+      lastPeriodEnd &&
+      todayDate > lastPeriodEnd &&
+      nextOvulation > todayDate &&
+      nextFertileStart && nextFertileStart > todayDate &&
+      !nextPredictedPeriodBeforeOvulation
+    );
+
+    return { fertileDays, allOvulations, nextOvulation, nextFertileStart, nextFertileEnd, lastPeriodCycle, overdueDays, isNextOvulationConfirmed };
   }, [cycles, todayStr]);
 
   const getDayInfo = (day) => {
@@ -227,16 +252,16 @@ const CalendarTab = ({ currentDate, setCurrentDate, cycles, symptoms, todayStr, 
               } else if (dayInfo.isPastFertile) {
                 baseStyle = { ...baseStyle, backgroundColor: dayInfo.isOvulation ? '#BFDBFE' : '#DBEAFE', borderColor: 'transparent', borderStyle: 'solid', opacity: 0.5 };
                 textColor = '#3B82F6';
-              } else if (dayInfo.isNextOvulation) {
+              } else if (dayInfo.isNextOvulation && isNextOvulationConfirmed) {
                 baseStyle = { ...baseStyle, backgroundColor: '#BFDBFE', borderColor: '#3B82F6', borderStyle: 'solid' };
                 textColor = '#1E3A8A';
-              } else if (dayInfo.isNextFertile) {
+              } else if (dayInfo.isNextFertile && isNextOvulationConfirmed) {
                 baseStyle = { ...baseStyle, backgroundColor: '#DBEAFE', borderColor: '#93C5FD', borderStyle: 'solid' };
                 textColor = '#1E40AF';
               } else if (dayInfo.isPredictedPeriod) {
                 baseStyle = { ...baseStyle, backgroundColor: '#FEE2E2', borderColor: '#FCA5A5', borderStyle: 'dashed' };
                 textColor = '#B91C1C';
-              } else if (dayInfo.isFarFutureFertile) {
+              } else if (dayInfo.isFarFutureFertile || ((dayInfo.isNextOvulation || dayInfo.isNextFertile) && !isNextOvulationConfirmed)) {
                 baseStyle = { ...baseStyle, backgroundColor: dayInfo.isOvulation ? '#BFDBFE' : '#DBEAFE', borderColor: '#93C5FD', borderStyle: 'dashed', opacity: 0.7 };
                 textColor = dayInfo.isOvulation ? '#1E3A8A' : '#1E40AF';
               } else if (hasSymptoms) {
